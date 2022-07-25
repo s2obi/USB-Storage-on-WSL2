@@ -1,0 +1,87 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>DiskAccessLibrary.FileSystems.Abstractions</name>
+    </assembly>
+    <members>
+        <member name="M:DiskAccessLibrary.FileSystems.Abstractions.FileSystem.GetDirectoryPath(System.String)">
+            <summary>
+            Will append a trailing slash to a directory path if not already present
+            </summary>
+            <param name="path"></param>
+            <returns></returns>
+        </member>
+        <member name="F:DiskAccessLibrary.FileSystems.Abstractions.FileSystemEntry.FullName">
+            <summary>
+            Full Path. Directory path should end with a trailing slash.
+            </summary>
+        </member>
+        <member name="M:DiskAccessLibrary.FileSystems.Abstractions.IFileSystem.GetEntry(System.String)">
+            <exception cref="T:System.IO.DirectoryNotFoundException"></exception>
+            <exception cref="T:System.IO.FileNotFoundException"></exception>
+            <exception cref="T:System.IO.IOException"></exception>
+            <exception cref="T:System.UnauthorizedAccessException"></exception>
+        </member>
+        <member name="M:DiskAccessLibrary.FileSystems.Abstractions.IFileSystem.CreateFile(System.String)">
+            <exception cref="T:System.IO.DirectoryNotFoundException"></exception>
+            <exception cref="T:System.IO.IOException"></exception>
+            <exception cref="T:System.UnauthorizedAccessException"></exception>
+        </member>
+        <member name="M:DiskAccessLibrary.FileSystems.Abstractions.IFileSystem.CreateDirectory(System.String)">
+            <exception cref="T:System.IO.DirectoryNotFoundException"></exception>
+            <exception cref="T:System.IO.IOException"></exception>
+            <exception cref="T:System.UnauthorizedAccessException"></exception>
+        </member>
+        <member name="M:DiskAccessLibrary.FileSystems.Abstractions.IFileSystem.Move(System.String,System.String)">
+            <exception cref="T:System.IO.DirectoryNotFoundException"></exception>
+            <exception cref="T:System.IO.FileNotFoundException"></exception>
+            <exception cref="T:System.IO.IOException"></exception>
+            <exception cref="T:System.UnauthorizedAccessException"></exception>
+        </member>
+        <member name="M:DiskAccessLibrary.FileSystems.Abstractions.IFileSystem.Delete(System.String)">
+            <exception cref="T:System.IO.DirectoryNotFoundException"></exception>
+            <exception cref="T:System.IO.FileNotFoundException"></exception>
+            <exception cref="T:System.IO.IOException"></exception>
+            <exception cref="T:System.UnauthorizedAccessException"></exception>
+        </member>
+        <member name="M:DiskAccessLibrary.FileSystems.Abstractions.IFileSystem.ListEntriesInDirectory(System.String)">
+            <exception cref="T:System.IO.DirectoryNotFoundException"></exception>
+            <exception cref="T:System.IO.IOException"></exception>
+            <exception cref="T:System.UnauthorizedAccessException"></exception>
+        </member>
+        <member name="M:DiskAccessLibrary.FileSystems.Abstractions.IFileSystem.ListDataStreams(System.String)">
+            <exception cref="T:System.IO.DirectoryNotFoundException"></exception>
+            <exception cref="T:System.IO.FileNotFoundException"></exception>
+            <exception cref="T:System.IO.IOException"></exception>
+            <exception cref="T:System.UnauthorizedAccessException"></exception>
+        </member>
+        <member name="M:DiskAccessLibrary.FileSystems.Abstractions.IFileSystem.OpenFile(System.String,System.IO.FileMode,System.IO.FileAccess,System.IO.FileShare,System.IO.FileOptions)">
+            <exception cref="T:System.IO.DirectoryNotFoundException"></exception>
+            <exception cref="T:System.IO.FileNotFoundException"></exception>
+            <exception cref="T:System.IO.IOException"></exception>
+            <exception cref="T:System.UnauthorizedAccessException"></exception>
+        </member>
+        <member name="M:DiskAccessLibrary.FileSystems.Abstractions.IFileSystem.SetAttributes(System.String,System.Nullable{System.Boolean},System.Nullable{System.Boolean},System.Nullable{System.Boolean})">
+            <exception cref="T:System.IO.FileNotFoundException"></exception>
+            <exception cref="T:System.IO.IOException"></exception>
+            <exception cref="T:System.UnauthorizedAccessException"></exception>
+        </member>
+        <member name="M:DiskAccessLibrary.FileSystems.Abstractions.IFileSystem.SetDates(System.String,System.Nullable{System.DateTime},System.Nullable{System.DateTime},System.Nullable{System.DateTime})">
+            <exception cref="T:System.IO.FileNotFoundException"></exception>
+            <exception cref="T:System.IO.IOException"></exception>
+            <exception cref="T:System.UnauthorizedAccessException"></exception>
+        </member>
+        <member name="P:DiskAccessLibrary.FileSystems.Abstractions.IFileSystem.Size">
+            <exception cref="T:System.IO.IOException"></exception>
+        </member>
+        <member name="P:DiskAccessLibrary.FileSystems.Abstractions.IFileSystem.FreeSpace">
+            <exception cref="T:System.IO.IOException"></exception>
+        </member>
+        <member name="P:DiskAccessLibrary.FileSystems.Abstractions.IFileSystem.SupportsNamedStreams">
+            <summary>
+            Indicates support for opening named streams (alternate data streams).
+            Named streams are opened using the filename:stream syntax.
+            </summary>
+        </member>
+    </members>
+</doc>

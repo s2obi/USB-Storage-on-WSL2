@@ -1,0 +1,235 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>DiskAccessLibrary.Win32</name>
+    </assembly>
+    <members>
+        <member name="M:DiskAccessLibrary.Win32.PhysicalDisk.ReadSectorsUnbuffered(System.Int64,System.Int32)">
+            <summary>
+            Sector refers to physical disk blocks, we can only read complete blocks
+            </summary>
+        </member>
+        <member name="M:DiskAccessLibrary.Win32.PhysicalDisk.UpdateProperties">
+            <summary>
+            Invalidates the cached partition table and re-enumerates the device
+            </summary>
+            <exception cref="T:System.IO.IOException"></exception>
+        </member>
+        <member name="M:DiskAccessLibrary.Win32.PhysicalDisk.GetOnlineStatus">
+            <summary>
+            Available on Windows Vista and newer
+            </summary>
+        </member>
+        <member name="M:DiskAccessLibrary.Win32.PhysicalDisk.GetOnlineStatus(System.Boolean@)">
+            <summary>
+            Available on Windows Vista and newer
+            </summary>
+            <exception cref="T:System.IO.IOException"></exception>
+        </member>
+        <member name="M:DiskAccessLibrary.Win32.PhysicalDisk.SetOnlineStatus(System.Boolean)">
+            <summary>
+            Available on Windows Vista and newer
+            </summary>
+        </member>
+        <member name="M:DiskAccessLibrary.Win32.PhysicalDisk.SetOnlineStatus(System.Boolean,System.Boolean)">
+            <summary>
+            Available on Windows Vista and newer
+            </summary>
+            <exception cref="T:System.IO.IOException"></exception>
+        </member>
+        <member name="P:DiskAccessLibrary.Win32.PhysicalDisk.TracksPerCylinder">
+            <summary>
+            a.k.a heads
+            </summary>
+        </member>
+        <member name="M:DiskAccessLibrary.Win32.PhysicalDiskHandlePool.ObtainHandle(System.Int32,System.IO.FileAccess,DiskAccessLibrary.ShareMode,System.Boolean@)">
+            <param name="newAllocation">True if a new handle has been allocated for the caller, the caller must release the handle eventually</param>
+        </member>
+        <member name="M:DiskAccessLibrary.Win32.LockHelper.LockBasicDiskAndVolumesOrNone(DiskAccessLibrary.Win32.PhysicalDisk)">
+            <summary>
+            Will lock physical basic disk and all volumes on it.
+            If the operation is not completed successfully, all locks will be releases.
+            </summary>
+        </member>
+        <member name="M:DiskAccessLibrary.Win32.PhysicalDiskHelper.OfflineAllOrNone(System.Collections.Generic.List{DiskAccessLibrary.Win32.PhysicalDisk})">
+            <summary>
+            Will not persist across reboots
+            </summary>
+        </member>
+        <member name="M:DiskAccessLibrary.Win32.WindowsVolumeHelper.GetWindowsVolumeGuid(System.UInt32,System.UInt64)">
+            <summary>
+            Get Windows Volume Guid of MBR disk
+            </summary>
+            <param name="partitionStartOffset">In bytes</param>
+            <returns></returns>
+        </member>
+        <member name="M:DiskAccessLibrary.Win32.WindowsVolumeManager.ExclusiveLock(System.Guid,System.IO.FileAccess)">
+            <summary>
+            Windows will flush all cached data to the volume before locking it.
+            Note: we can only lock a dynamic volume if the disk is online and the volume is operational.
+            </summary>
+            <returns>True if a new lock has been obtained</returns>
+        </member>
+        <member name="M:DiskAccessLibrary.Win32.WindowsVolumeManager.DismountVolume(System.Guid)">
+            <summary>
+            Note that the volume will be remounted again on first access.
+            </summary>
+        </member>
+        <member name="M:DiskAccessLibrary.Win32.WindowsVolumeManager.IsMounted(System.Guid)">
+            <summary>
+            If Windows Automount is turned off, then partitions on new disks are not mounted. (but can be locked).
+            Failed dynamic volumes are not mounted as well. (and can't be locked).
+            Note: A volume can have 0 mount points and still be mounted and access by Windows.
+            Note: The NTFS file system treats a locked volume as a dismounted volume.
+            </summary>
+        </member>
+        <member name="M:DiskAccessLibrary.Win32.WindowsVolumeManager.HasMountPoints(System.Guid)">
+            <summary>
+            A volume can be mounted by the OS even if it has no mount points
+            </summary>
+        </member>
+        <member name="P:DiskAccessLibrary.Win32.DeviceInfo.DeviceName">
+            <summary>
+            Device manager shows the friendly name if it exists and the device description otherwise.
+            </summary>
+        </member>
+        <member name="M:DiskAccessLibrary.Win32.DeviceInterfaceUtils.GetClassDevices(System.Guid)">
+            <summary>
+            returns a handle to a device information set that contains requested device information elements.
+            </summary>
+            <remarks>
+            The caller must delete the returned device information set when it is no longer needed
+            by calling DestroyDeviceInfoList().
+            https://docs.microsoft.com/en-us/windows/desktop/api/setupapi/nf-setupapi-setupdigetclassdevsw
+            </remarks>
+        </member>
+        <member name="M:DiskAccessLibrary.Win32.DeviceInterfaceUtils.GetDeviceInterfaceDetail(System.IntPtr,DiskAccessLibrary.Win32.SP_DEVICE_INTERFACE_DATA)">
+            <remarks>
+            https://docs.microsoft.com/en-us/windows/desktop/api/setupapi/nf-setupapi-setupdigetdeviceinterfacedetaila
+            </remarks>
+        </member>
+        <member name="M:DiskAccessLibrary.Win32.PhysicalDiskControl.GetPartitionSize(Microsoft.Win32.SafeHandles.SafeFileHandle)">
+            <summary>
+            Used to determine the exact disk size on Windows 2000
+            Note: A lot of other programs (including msinfo32) will display the inaccurate
+            size of Cylinders * TracksPerCylinder * SectorsPerTrack * BytesPerSector
+            </summary>
+            <param name="hDevice">Handle to disk or partition</param>
+        </member>
+        <member name="M:DiskAccessLibrary.Win32.PhysicalDiskControl.GetDiskGeometry(Microsoft.Win32.SafeHandles.SafeFileHandle)">
+            <summary>
+            Supported on Windows 2000
+            </summary>
+        </member>
+        <member name="M:DiskAccessLibrary.Win32.PhysicalDiskControl.GetDiskGeometryEx(Microsoft.Win32.SafeHandles.SafeFileHandle)">
+            <summary>
+            Supported on Windows XP and upward
+            </summary>
+        </member>
+        <member name="M:DiskAccessLibrary.Win32.PhysicalDiskControl.UpdateDiskProperties(Microsoft.Win32.SafeHandles.SafeFileHandle)">
+            <summary>
+            Invalidates the cached partition table and re-enumerates the device
+            </summary>
+        </member>
+        <member name="M:DiskAccessLibrary.Win32.PhysicalDiskControl.GetDeviceDescription(Microsoft.Win32.SafeHandles.SafeFileHandle)">
+            <summary>
+            Returns the device product ID
+            </summary>
+        </member>
+        <member name="M:DiskAccessLibrary.Win32.PhysicalDiskControl.GetDeviceSerialNumber(Microsoft.Win32.SafeHandles.SafeFileHandle)">
+            <summary>
+            Returns the device serial number
+            </summary>
+        </member>
+        <member name="M:DiskAccessLibrary.Win32.PhysicalDiskControl.DecodeDeviceSerialNumber(System.String)">
+            <summary>
+            Serial number may be encoded in HEX (with each two characters swapped)
+            </summary>
+        </member>
+        <member name="M:DiskAccessLibrary.Win32.PhysicalDiskControl.GetOnlineStatus(Microsoft.Win32.SafeHandles.SafeFileHandle)">
+            <summary>
+            Available on Windows Vista and newer
+            </summary>
+        </member>
+        <member name="M:DiskAccessLibrary.Win32.PhysicalDiskControl.GetOnlineStatus(Microsoft.Win32.SafeHandles.SafeFileHandle,System.Boolean@)">
+            <summary>
+            Available on Windows Vista and newer
+            </summary>
+        </member>
+        <member name="M:DiskAccessLibrary.Win32.PhysicalDiskControl.TrySetOnlineStatus(Microsoft.Win32.SafeHandles.SafeFileHandle,System.Boolean,System.Boolean)">
+            <summary>
+            Take the disk offline / online, Available on Windows Vista and newer
+            </summary>
+            <param name="persist">persist is effective for both online==true and online==false</param>
+        </member>
+        <member name="M:DiskAccessLibrary.Win32.PhysicalDiskControl.SetOnlineStatus(Microsoft.Win32.SafeHandles.SafeFileHandle,System.Boolean,System.Boolean)">
+            <summary>
+            Available on Windows Vista and newer
+            </summary>
+        </member>
+        <member name="M:DiskAccessLibrary.Win32.VolumeControl.GetVolumeMountPoints(System.Guid)">
+            <summary>
+            e.g.
+            D:\
+            E:\MountPoint\
+            </summary>
+        </member>
+        <member name="M:DiskAccessLibrary.Win32.VolumeControl.IsVolumeMounted(System.Char)">
+            <summary>
+            Note: The NTFS file system treats a locked volume as a dismounted volume.
+            </summary>
+        </member>
+        <member name="M:DiskAccessLibrary.Win32.VolumeControl.IsVolumeMounted(System.String)">
+            <summary>
+            Note: The NTFS file system treats a locked volume as a dismounted volume.
+            </summary>
+        </member>
+        <member name="M:DiskAccessLibrary.Win32.VolumeControl.IsVolumeMounted(System.Guid)">
+            <summary>
+            Note: The NTFS file system treats a locked volume as a dismounted volume.
+            </summary>
+        </member>
+        <member name="M:DiskAccessLibrary.Win32.VolumeControl.IsVolumeMounted(Microsoft.Win32.SafeHandles.SafeFileHandle)">
+            <summary>
+            Note: The NTFS file system treats a locked volume as a dismounted volume.
+            </summary>
+            <param name="handle">When opening a volume, the dwShareMode parameter must have the FILE_SHARE_WRITE flag.</param>
+        </member>
+        <member name="M:DiskAccessLibrary.Win32.VolumeControl.LockVolume(Microsoft.Win32.SafeHandles.SafeFileHandle)">
+            <param name="handle">
+            The application must specify the FILE_SHARE_READ and FILE_SHARE_WRITE flags in the dwShareMode parameter of CreateFile.
+            https://msdn.microsoft.com/en-us/library/Aa364575
+            </param>
+        </member>
+        <member name="M:DiskAccessLibrary.Win32.VolumeControl.DismountVolume(Microsoft.Win32.SafeHandles.SafeFileHandle)">
+            <param name="handle">
+            The application must specify the FILE_SHARE_READ and FILE_SHARE_WRITE flags in the dwShareMode parameter of CreateFile.
+            http://msdn.microsoft.com/en-us/library/windows/desktop/aa364562%28v=vs.85%29.aspx
+            </param>
+        </member>
+        <member name="M:DiskAccessLibrary.Win32.OperatingSystemVolume.ReadSectorsUnbuffered(System.Int64,System.Int32)">
+            <summary>
+            Sector refers to physical disk blocks, we can only read complete blocks
+            </summary>
+        </member>
+        <member name="M:DiskAccessLibrary.Win32.OperatingSystemVolume.AllowExtendedIO">
+            <summary>
+            Volume should be locked at this point for this call to have any effect
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:DiskAccessLibrary.Win32.VolumeHandlePool.ObtainHandle(System.Guid,System.IO.FileAccess,DiskAccessLibrary.ShareMode,System.Boolean@)">
+            <param name="newAllocation">True if a new handle has been allocated for the caller, the caller must release the handle eventually</param>
+        </member>
+        <member name="M:DiskAccessLibrary.LogicalDiskManager.Win32.DiskOfflineHelper.OfflineDiskGroup(System.Guid)">
+            <summary>
+            Will not persist across reboots
+            </summary>
+        </member>
+        <member name="M:DiskAccessLibrary.LogicalDiskManager.Win32.DiskOfflineHelper.OfflineAllOrNone(System.Collections.Generic.List{DiskAccessLibrary.LogicalDiskManager.DynamicDisk})">
+            <summary>
+            Will not persist across reboots
+            </summary>
+        </member>
+    </members>
+</doc>
