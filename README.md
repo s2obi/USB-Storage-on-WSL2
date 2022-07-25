@@ -213,15 +213,18 @@ $ sudo /etc/init.d/open-iscsi start
 ## WSL2에 USB 연결
 - Windows(Host)에서 iSCSIConsole 프로젝트(https://github.com/TalAloni/iSCSIConsole) 다운로드 후 빌드
 - 관리자 권한으로 iSCSIConsole 실행
-![iSCSI Console Main 화면](https://s3-us-west-2.amazonaws.com/secure.notion-static.com/99f681f4-7459-4a05-99a7-9df6d6593629/Untitled.png)
-iSCSI Console Main 화면
+<p align="center">
+ <img src="img/iSCSIConsole_main.png" alt="iSCSI Console 메인 화면">
+</p>
 
 - iSCSI Console에서 Target USB 추가 (Add Target →Add Physical Disk)
-![Target USB 추가](https://s3-us-west-2.amazonaws.com/secure.notion-static.com/3b29b08d-7809-4638-b556-8903df539a9c/Untitled.png)
-Target USB 추가
+<p align="center">
+ <img src="img/iSCSIConsole_TargetAdd.png" alt="Target USB 추가">
+</p>
 
-![추가된 Target 확인](https://s3-us-west-2.amazonaws.com/secure.notion-static.com/dbe2f4dc-5a7e-4a6b-bc6b-02494ff043d1/Untitled.png)
-추가된 Target 확인
+<p align="center">
+ <img src="img/iSCSIConsole_TargetAdded.png" alt="추가된 USB Target 확인">
+</p>
 
 - 저장장치 탐색 (매 WSL2 부팅 시 마다 환경변수 설정 필요)
 ```bash
