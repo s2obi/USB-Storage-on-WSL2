@@ -257,6 +257,74 @@ $ lsblk
 $ sudo iscsiadm -m node --targetname "iqn.1991-05.com.microsoft:target1" --portal "$WSLHOSTIP:3260" --logout
 ```
 
+## Make shell scripts for iSCSI command to use simply
+- ~/.bashrc 의 끝에 추가
+```bash
+export WSLHOSTIP=$(cat /etc/resolv.conf | grep nameserver | awk '{print $2}')
+```
+
+- /usr/bin/usblist.sh 생성
+```bash
+$ sudo vi /usr/bin/usblist.sh
+```
+```bash
+#!/bin/bash
+sudo iscsiadm -m -discovery -t st -p $WSLHOSTIP
+sudo iscsiadm -m node
+```
+- 실행 권한 추가
+```bash
+sudo chmod 755 /usr/bin/usblist.sh
+```
+
+- /usr/bin/usbcon.sh 생성
+```bash
+$ sudo vi /usr/bin/usbcon.sh
+```
+```bash
+#!/bin/bash
+sudo iscsiadm -m node --targetname "$1" --portal "$WSLHOSTIP:3260" --login
+```
+- 실행 권한 추가
+```bash
+sudo chmod 755 /usr/bin/usbcon.sh
+```
+
+- /usr/bin/usbdiscon.sh 생성
+```bash
+$ sudo vi /usr/bin/usbdiscon.sh
+```
+```bash
+#!/bin/bash
+sudo iscsiadm -m node --targetname "$1" --portal "$WSLHOSTIP:3260" --logout
+```
+- 실행 권한 추가
+```bash
+sudo chmod 755 /usr/bin/usbdiscon.sh
+```
+## Usage
+```bash
+$ usblist
+192.168.176.1:3260,-1 iqn.1991-05.com.microsoft:target1
+192.168.176.1:3260,-1 iqn.1991-05.com.microsoft:target1
+
+$ usbcon iqn.1991-05.com.microsoft:target1
+Logging in to [iface: default, target: iqn.1991-05.com.microsoft:target1, portal: 192.168.176.1,3260] (multiple)
+Login to [iface: default, target: iqn.1991-05.com.microsoft:target1, portal: 192.168.176.1,3260] successful.
+
+$ lsblk
+NAME   MAJ:MIN RM   SIZE RO TYPE MOUNTPOINT
+sda      8:0    0 366.8M  1 disk
+sdb      8:16   0     1T  0 disk
+sdc      8:32   0     1T  0 disk /
+sdd      8:48   0  59.8G  0 disk
+├─sdd1   8:49   0  59.8G  0 part
+└─sdd2   8:50   0     1M  0 part
+
+$ usbdiscon iqn.1991-05.com.microsoft:target1
+Logging out of session [sid: 2, target: iqn.1991-05.com.microsoft:target1, portal: 192.168.176.1,3260]
+Logout of [sid: 2, target: iqn.1991-05.com.microsoft:target1, portal: 192.168.176.1,3260] successful.
+```
 ## References
 - [WSL2 및 Ubuntu 설치 : 네이버 블로그 (naver.com)](https://blog.naver.com/PostView.naver?blogId=chcbaram&logNo=222525998696)
 - https://github.com/jovton/USB-Storage-on-WSL2
