@@ -1,6 +1,7 @@
 ## Prerequisite
-- WSL2 (Ubuntu 18.04 LTS)
+- WSL2 (Ubuntu 18.04 LTS or 20.*)
 - Visual Studio
+- .NET Framework (3.5 or 4.*)
 
 ## Instructions
 - git, 컴파일러 설치
@@ -263,7 +264,7 @@ $ sudo iscsiadm -m node --targetname "iqn.1991-05.com.microsoft:target1" --porta
 export WSLHOSTIP=$(cat /etc/resolv.conf | grep nameserver | awk '{print $2}')
 ```
 
-- /usr/bin/usblist.sh 생성
+- /usr/bin/usblist 생성
 ```bash
 $ sudo vi /usr/bin/usblist.sh
 ```
@@ -274,12 +275,12 @@ sudo iscsiadm -m node
 ```
 - 실행 권한 추가
 ```bash
-sudo chmod 755 /usr/bin/usblist.sh
+sudo chmod 755 /usr/bin/usblist
 ```
 
 - /usr/bin/usbcon.sh 생성
 ```bash
-$ sudo vi /usr/bin/usbcon.sh
+$ sudo vi /usr/bin/usbcon
 ```
 ```bash
 #!/bin/bash
@@ -287,12 +288,12 @@ sudo iscsiadm -m node --targetname "$1" --portal "$WSLHOSTIP:3260" --login
 ```
 - 실행 권한 추가
 ```bash
-sudo chmod 755 /usr/bin/usbcon.sh
+sudo chmod 755 /usr/bin/usbcon
 ```
 
-- /usr/bin/usbdiscon.sh 생성
+- /usr/bin/usbdiscon 생성
 ```bash
-$ sudo vi /usr/bin/usbdiscon.sh
+$ sudo vi /usr/bin/usbdiscon
 ```
 ```bash
 #!/bin/bash
@@ -300,7 +301,7 @@ sudo iscsiadm -m node --targetname "$1" --portal "$WSLHOSTIP:3260" --logout
 ```
 - 실행 권한 추가
 ```bash
-sudo chmod 755 /usr/bin/usbdiscon.sh
+sudo chmod 755 /usr/bin/usbdiscon
 ```
 ## Usage
 ```bash
