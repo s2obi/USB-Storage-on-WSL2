@@ -266,11 +266,11 @@ export WSLHOSTIP=$(cat /etc/resolv.conf | grep nameserver | awk '{print $2}')
 
 - /usr/bin/usblist 생성
 ```bash
-$ sudo vi /usr/bin/usblist.sh
+$ sudo vi /usr/bin/usblist
 ```
 ```bash
 #!/bin/bash
-sudo iscsiadm -m -discovery -t st -p $WSLHOSTIP
+sudo iscsiadm -m discovery -t st -p $WSLHOSTIP
 sudo iscsiadm -m node
 ```
 - 실행 권한 추가
@@ -278,7 +278,7 @@ sudo iscsiadm -m node
 sudo chmod 755 /usr/bin/usblist
 ```
 
-- /usr/bin/usbcon.sh 생성
+- /usr/bin/usbcon 생성
 ```bash
 $ sudo vi /usr/bin/usbcon
 ```
