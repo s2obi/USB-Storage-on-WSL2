@@ -4,18 +4,18 @@
 - .NET Framework (3.5 or 4.*)
 
 ## Instructions
-- git, 컴파일러 설치
+- 빌드 관련 패키지 설치
 ```bash
-$ sudo apt install build-essential flex bison libssl-dev libelf-dev libncurses5-dev git bc
+$ sudo apt install build-essential flex bison dwarves libssl-dev libelf-dev libncurses5-dev git bc
 ```
 
-- 커널 버전 확인
+- 현재 WSL2 커널 버전 확인
 ```bash
 $ uname -r
 5.10.102.1-microsoft-standard-WSL2+
 ```
 
-- WSL2 커널 clone (자신의 커널 버전에 맞게 브랜치 설정)
+- WSL2 커널 소스 clone (현재 커널 버전에 맞게 브랜치 설정)
 ```bash
 $ git clone --branch linux-msft-wsl-5.10.y https://github.com/microsoft/WSL2-Linux-Kernel.git
 $ cd WSL2-Linux-Kernel
@@ -53,12 +53,6 @@ File systems --->
    Networking options  --->
       [*] TCP/IP networking
 ```
-
-- dwarves 설치(커널 컴파일시 BTF 생성 에러 제거를 위해 추가함)
-```bash
-$ sudo apt install dwarves
-```
-
 - 커널 컴파일
 ```bash
 $ sudo make KCONFIG_CONFIG=Microsoft/config-wsl -j$(nproc)
@@ -76,6 +70,8 @@ $ cp ./arch/x86_64/boot/bzImage /mnt/c/Users/현재_윈도우_사용자명/
 
 - Windows(host)의 사용자 디렉터리에 “.wslconfig” 파일 생성 후 아래와 같이 작성하여 저장
 ```bash
+$ sudo vi /mnt/c/Users/현재_윈도우_사용자명/.wslconfig
+
 [wsl2]
 kernel=C:\\Users\\현재_윈도우_사용자명\\bzImage
 swap=0
@@ -94,117 +90,6 @@ $ sudo modprobe -v libiscsi
 $ sudo modprobe -v scsi_transport_iscsi
 $ sudo modprobe -v iscsi_tcp
 $ sudo modprobe -v libiscsi_tcp
-```
-
-## WSL2 systemd 활성화
-패키지 설치
-- daemonize
-- dbus-user-session
-- fontconfig
-```bash
-$ sudo apt-get update && sudo apt-get install -yqq daemonize dbus-user-session fontconfig
-```
-
-- /usr/sbin/start-systemd-namespace 생성 후 아래 내용 저장
-```bash
-#!/bin/bash
-
-SYSTEMD_PID=$(ps -ef | grep '/lib/systemd/systemd --system-unit=basic.target$' | grep -v unshare | awk '{print $2}')
-if [ -z "$SYSTEMD_PID" ] || [ "$SYSTEMD_PID" != "1" ]; then
-    export PRE_NAMESPACE_PATH="$PATH"
-    (set -o posix; set) | \
-        grep -v "^BASH" | \
-        grep -v "^DIRSTACK=" | \
-        grep -v "^EUID=" | \
-        grep -v "^GROUPS=" | \
-        grep -v "^HOME=" | \
-        grep -v "^HOSTNAME=" | \
-        grep -v "^HOSTTYPE=" | \
-        grep -v "^IFS='.*"$'\n'"'" | \
-        grep -v "^LANG=" | \
-        grep -v "^LOGNAME=" | \
-        grep -v "^MACHTYPE=" | \
-        grep -v "^NAME=" | \
-        grep -v "^OPTERR=" | \
-        grep -v "^OPTIND=" | \
-        grep -v "^OSTYPE=" | \
-        grep -v "^PIPESTATUS=" | \
-        grep -v "^POSIXLY_CORRECT=" | \
-        grep -v "^PPID=" | \
-        grep -v "^PS1=" | \
-        grep -v "^PS4=" | \
-        grep -v "^SHELL=" | \
-        grep -v "^SHELLOPTS=" | \
-        grep -v "^SHLVL=" | \
-        grep -v "^SYSTEMD_PID=" | \
-        grep -v "^UID=" | \
-        grep -v "^USER=" | \
-        grep -v "^_=" | \
-        cat - > "$HOME/.systemd-env"
-    echo "PATH='$PATH'" >> "$HOME/.systemd-env"
-    exec sudo /usr/sbin/enter-systemd-namespace "$BASH_EXECUTION_STRING"
-fi
-if [ -n "$PRE_NAMESPACE_PATH" ]; then
-    export PATH="$PRE_NAMESPACE_PATH"
-fi
-```
-
-- /usr/sbin/enter-systemd-namespace 생성 후 아래 내용 저장
-
-```bash
-#!/bin/bash
-
-if [ "$UID" != 0 ]; then
-    echo "You need to run $0 through sudo"
-    exit 1
-fi
-
-SYSTEMD_PID="$(ps -ef | grep '/lib/systemd/systemd --system-unit=basic.target$' | grep -v unshare | awk '{print $2}')"
-if [ -z "$SYSTEMD_PID" ]; then
-    /usr/sbin/daemonize /usr/bin/unshare --fork --pid --mount-proc /lib/systemd/systemd --system-unit=basic.target
-    while [ -z "$SYSTEMD_PID" ]; do
-        SYSTEMD_PID="$(ps -ef | grep '/lib/systemd/systemd --system-unit=basic.target$' | grep -v unshare | awk '{print $2}')"
-    done
-fi
-
-if [ -n "$SYSTEMD_PID" ] && [ "$SYSTEMD_PID" != "1" ]; then
-    if [ -n "$1" ] && [ "$1" != "bash --login" ] && [ "$1" != "/bin/bash --login" ]; then
-        exec /usr/bin/nsenter -t "$SYSTEMD_PID" -a \
-            /usr/bin/sudo -H -u "$SUDO_USER" \
-            /bin/bash -c 'set -a; source "$HOME/.systemd-env"; set +a; exec bash -c '"$(printf "%q" "$@")"
-    else
-        exec /usr/bin/nsenter -t "$SYSTEMD_PID" -a \
-            /bin/login -p -f "$SUDO_USER" \
-            $(/bin/cat "$HOME/.systemd-env" | grep -v "^PATH=")
-    fi
-    echo "Existential crisis"
-fi
-```
-
-- 권한 추가
-```bash
-$ sudo chmod +x /usr/sbin/enter-systemd-namespace
-```
-
-- sudo visudo 입력 후 sudoers에 추가
-```markdown
-Defaults        env_keep += WSLPATH
-Defaults        env_keep += WSLENV
-Defaults        env_keep += WSL_INTEROP
-Defaults        env_keep += WSL_DISTRO_NAME
-Defaults        env_keep += PRE_NAMESPACE_PATH
-%sudo ALL=(ALL) NOPASSWD: /usr/sbin/enter-systemd-namespace
-```
-
-- /etc/bash.bashrc 의 맨 아래에 추가
-```markdown
-sudo sed -i 2a"# Start or enter a PID namespace in WSL2\nsource /usr/sbin/start-systemd-namespace\n" /etc/bash.bashrc
-```
-
-- Windows(Host)에 환경변수 추가
-```bash
-cmd.exe /C setx WSLENV BASH_ENV/u
-cmd.exe /C setx BASH_ENV /etc/bash.bashrc
 ```
 
 - open-iscsi 설치
@@ -265,8 +150,10 @@ $ sudo iscsiadm -m node --targetname "iqn.1991-05.com.microsoft:target1" --porta
 ```
 
 ## Make shell scripts for iSCSI command to use simply
-- ~/.bashrc 의 끝에 추가
+- /etc/profile 의 끝에 WSLHOSTIP 환경 변수 추가
 ```bash
+$ sudo vi /etc/profile
+
 export WSLHOSTIP=$(cat /etc/resolv.conf | grep nameserver | awk '{print $2}')
 ```
 
@@ -279,10 +166,6 @@ $ sudo vi /usr/bin/usblist
 sudo iscsiadm -m discovery -t st -p $WSLHOSTIP
 sudo iscsiadm -m node
 ```
-- 실행 권한 추가
-```bash
-sudo chmod 755 /usr/bin/usblist
-```
 
 - /usr/bin/usbcon 생성
 ```bash
@@ -291,10 +174,6 @@ $ sudo vi /usr/bin/usbcon
 ```bash
 #!/bin/bash
 sudo iscsiadm -m node --targetname "$1" --portal "$WSLHOSTIP:3260" --login
-```
-- 실행 권한 추가
-```bash
-sudo chmod 755 /usr/bin/usbcon
 ```
 
 - /usr/bin/usbdiscon 생성
@@ -307,7 +186,7 @@ sudo iscsiadm -m node --targetname "$1" --portal "$WSLHOSTIP:3260" --logout
 ```
 - 실행 권한 추가
 ```bash
-sudo chmod 755 /usr/bin/usbdiscon
+$ sudo chmod 755 /usr/bin/usblist /usr/bin/usbcon /usr/bin/usbdiscon
 ```
 ## Usage
 ```bash
