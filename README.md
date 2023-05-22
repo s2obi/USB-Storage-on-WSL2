@@ -1,5 +1,5 @@
 ## Prerequisite
-- WSL2 (Ubuntu 18.04 LTS or 20.*)
+- WSL2 (Ubuntu 18.04 LTS or higher, currently 22.04 tested)
 - Visual Studio
 - .NET Framework (3.5 or 4.*)
 
@@ -9,9 +9,15 @@
 $ sudo apt install build-essential flex bison libssl-dev libelf-dev libncurses5-dev git bc
 ```
 
-- Microsoft WSL2 커널 clone
+- 커널 버전 확인
 ```bash
-$ git clone https://github.com/microsoft/WSL2-Linux-Kernel.git
+$ uname -r
+5.10.102.1-microsoft-standard-WSL2+
+```
+
+- WSL2 커널 clone (자신의 커널 버전에 맞게 브랜치 설정)
+```bash
+$ git clone --branch linux-msft-wsl-5.10.y https://github.com/microsoft/WSL2-Linux-Kernel.git
 $ cd WSL2-Linux-Kernel
 ```
 
